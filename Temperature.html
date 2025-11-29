@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Temperature Analytics</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: #f8fafc;
+        min-height: 100vh;
+        padding: 40px 20px;
+        color: #1e293b;
+    }
+    
+    .container {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+    
+    header {
+        text-align: center;
+        margin-bottom: 40px;
+        color: #0f172a;
+    }
+    
+    h1 {
+        font-size: 36px;
+        font-weight: 800;
+        margin-bottom: 8px;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .subtitle {
+        font-size: 16px;
+        color: #64748b;
+    }
+    
+    .cards-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-bottom: 24px;
+    }
+    
+    .hero-card {
+        background: white;
+        border-radius: 20px;
+        padding: 48px 40px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s;
+    }
+    
+    .hero-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: linear-gradient(90deg, #3b82f6 0%, #06b6d4 100%);
+    }
+    
+    .hero-card.fever::before {
+        background: linear-gradient(90deg, #ef4444 0%, #f97316 100%);
+    }
+    
+    .hero-card.normal::before {
+        background: linear-gradient(90deg, #10b981 0%, #14b8a6 100%);
+    }
+    
+    .card-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-bottom: 20px;
+    }
+    
+    .card-value {
+        font-size: 72px;
+        font-weight: 900;
+        color: #0f172a;
+        line-height: 1;
+        margin-bottom: 16px;
+    }
+    
+    .card-icon {
+        font-size: 48px;
+        margin-top: 12px;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-top: 12px;
+    }
+    
+    .status-badge.fever {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+    
+    .status-badge.normal {
+        background: #d1fae5;
+        color: #065f46;
+    }
+    
+    .status-badge.neutral {
+        background: #e0e7ff;
+        color: #3730a3;
+    }
+    
+    .stats-container {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+        margin-bottom: 24px;
+    }
+    
+    .section-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 28px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .title-icon {
+        width: 8px;
+        height: 8px;
+        background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+        border-radius: 50%;
+    }
+    
+    .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 32px;
+    }
+    
+    .metric-item {
+        text-align: center;
+        padding: 24px;
+        background: #f8fafc;
+        border-radius: 16px;
+        transition: all 0.3s;
+        border: 2px solid transparent;
+    }
+    
+    .metric-item:hover {
+        transform: translateY(-4px);
+        border-color: #3b82f6;
+        box-shadow: 0 8px 20px rgba(59, 130, 246, 0.15);
+    }
+    
+    .metric-value {
+        font-size: 40px;
+        font-weight: 800;
+        background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 8px;
+    }
+    
+    .metric-label {
+        font-size: 12px;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 600;
+    }
+    
+    .action-bar {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+    }
+    
+    .button {
+        background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+        color: white;
+        border: none;
+        padding: 16px 32px;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+    }
+    
+    .button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+    }
+    
+    .button:active {
+        transform: translateY(0);
+    }
+    
+    .info-box {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        border-radius: 12px;
+        padding: 16px 20px;
+        margin-bottom: 24px;
+        text-align: center;
+    }
+    
+    .info-text {
+        font-size: 13px;
+        color: #1e40af;
+        font-weight: 500;
+    }
+    
+    @media (max-width: 968px) {
+        .cards-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .metrics-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+    }
+    
+    @media (max-width: 640px) {
+        .metrics-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .card-value {
+            font-size: 56px;
+        }
+        
+        .hero-card {
+            padding: 32px 24px;
+        }
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>🌡️ Temperature Analytics</h1>
+        <p class="subtitle">Body temperature monitoring dashboard</p>
+    </header>
+    
+    <div class="info-box">
+        <p class="info-text">Normal Range: 97.0°F - 100.4°F | Fever: Above 100.4°F</p>
+    </div>
+    
+    <div class="cards-grid">
+        <div class="hero-card" id="tempCard">
+            <div class="card-label">Current Temperature</div>
+            <div class="card-value" id="temperature">--°F</div>
+            <div class="status-badge neutral" id="statusBadge">Awaiting Reading</div>
+        </div>
+        
+        <div class="hero-card">
+            <div class="card-label">Status</div>
+            <div class="card-value" id="statusIcon">📊</div>
+            <div class="card-icon" id="statusText">Generate Temperature</div>
+        </div>
+    </div>
+    
+    <div class="stats-container">
+        <div class="section-title">
+            <span class="title-icon"></span>
+            Temperature Statistics
+        </div>
+        <div class="metrics-grid">
+            <div class="metric-item">
+                <div class="metric-value" id="totalReadings">0</div>
+                <div class="metric-label">Total Readings</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-value" id="avgTemp">0.0°F</div>
+                <div class="metric-label">Average Temp</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-value" id="normalCount">0</div>
+                <div class="metric-label">Normal Readings</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-value" id="feverCount">0</div>
+                <div class="metric-label">Fever Readings</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="action-bar">
+        <button class="button" onclick="generateTemp()">🌡️ Generate Temperature</button>
+    </div>
+</div>
+
+<script>
+let readings = [];
+
+function generateTemp() {
+    const temp = (Math.random() * 10) + 95; // 95-105°F
+    const isFever = temp > 100.4;
+    
+    readings.push({
+        temp: temp,
+        isFever: isFever
+    });
+    
+    updateDisplay(temp, isFever);
+    updateStats();
+}
+
+function updateDisplay(temp, isFever) {
+    const tempCard = document.getElementById('tempCard');
+    const statusBadge = document.getElementById('statusBadge');
+    const statusIcon = document.getElementById('statusIcon');
+    const statusText = document.getElementById('statusText');
+    
+    // Update temperature
+    document.getElementById('temperature').textContent = temp.toFixed(1) + '°F';
+    
+    // Update status
+    if (isFever) {
+        tempCard.className = 'hero-card fever';
+        statusBadge.className = 'status-badge fever';
+        statusBadge.textContent = 'Fever Detected';
+        statusIcon.textContent = '🔥';
+        statusText.textContent = 'Above Normal Range';
+    } else {
+        tempCard.className = 'hero-card normal';
+        statusBadge.className = 'status-badge normal';
+        statusBadge.textContent = 'Normal';
+        statusIcon.textContent = '✅';
+        statusText.textContent = 'Within Normal Range';
+    }
+}
+
+function updateStats() {
+    const total = readings.length;
+    const normalCount = readings.filter(r => !r.isFever).length;
+    const feverCount = readings.filter(r => r.isFever).length;
+    const avgTemp = readings.reduce((sum, r) => sum + r.temp, 0) / total;
+    
+    document.getElementById('totalReadings').textContent = total;
+    document.getElementById('avgTemp').textContent = avgTemp.toFixed(1) + '°F';
+    document.getElementById('normalCount').textContent = normalCount;
+    document.getElementById('feverCount').textContent = feverCount;
+}
+</script>
+
+</body>
+</html>
