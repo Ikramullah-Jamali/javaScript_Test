@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Remove Duplicates</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f0f4f8;
+        padding: 20px;
+        color: #1e293b;
+    }
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+    h1 {
+        margin-bottom: 20px;
+    }
+    button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        background: #3b82f6;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    .card {
+        background: #e2e8f0;
+        border-radius: 12px;
+        padding: 15px;
+        margin-top: 15px;
+    }
+    .card-title {
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Remove Duplicates from Array</h1>
+    <button onclick="removeDuplicates()">Remove Duplicates</button>
+
+    <div class="card">
+        <div class="card-title">Original Array:</div>
+        <div id="original"></div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Array without Duplicates (Sorted):</div>
+        <div id="unique"></div>
+    </div>
+</div>
+
+<script>
+var numbers = [2, 5, 3, 2, 8, 5, 3, 9];
+document.getElementById('original').textContent = numbers.join(', ');
+
+function removeDuplicates() {
+    var uniqueNumbers = [];
+    
+    for (var i = 0; i < numbers.length; i++) {
+        var isDuplicate = false;
+        for (var j = 0; j < uniqueNumbers.length; j++) {
+            if (numbers[i] === uniqueNumbers[j]) {
+                isDuplicate = true;
+                break;
+            }
+        }
+        if (!isDuplicate) {
+            uniqueNumbers.push(numbers[i]);
+        }
+    }
+
+    // Sort the array
+    uniqueNumbers.sort(function(a, b) {
+        return a - b;
+    });
+    
+    document.getElementById('unique').textContent = uniqueNumbers.join(', ');
+}
+</script>
+
+</body>
+</html>
